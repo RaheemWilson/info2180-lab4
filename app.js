@@ -1,21 +1,28 @@
 window.onload = function(){
-    let searchBtn = document.querySelector("#search-btn")
+    let searchBtn = document.querySelector("#search-btn");
+    ProcessQuery();
+    searchBtn.addEventListener("click", ProcessQuery);
+}
 
-    searchBtn.addEventListener("click", () => {
-        fetch("http://localhost:8888/info2180-lab4/superheroes.php?q=")
-            .then(response => {
-                if(response.ok){
-                    return response.text()
-                }
-                else{
-                    throw new Error("An error has occured")
-                }
-            })
-            .then(data => {
-                alert(data)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
+
+
+function ProcessQuery(){
+    let result = document.querySelector(".result");
+    let input = document.querySelector("input");
+    let query = input.value ? input.value : "";
+    fetch(`http://localhost/info2180-lab4/superheroes.php?query=${query.trim()}`)
+        .then(response => {
+            if(response.ok){
+                return response.text();
+            }
+            else{
+                throw new Error(`An error has occured: ${response.status}`);
+            }
+        })
+        .then(data => {
+            result.innerHTML = data;
+        })
+        .catch(err => {
+            console.log(err);
+        })
 }

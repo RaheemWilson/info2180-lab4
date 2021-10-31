@@ -1,5 +1,9 @@
 <?php
 
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST');
+header("Access-Control-Allow-Headers: X-Requested-With");
+
 $superheroes = [
   [
       "id" => 1,
@@ -65,8 +69,40 @@ $superheroes = [
 
 ?>
 
-<ul>
-<?php foreach ($superheroes as $superhero): ?>
-  <li><?= $superhero['alias']; ?></li>
-<?php endforeach; ?>
-</ul>
+<?php 
+    if(isset($_GET["query"])){
+        $name = $_GET["query"];
+        $newname = strtolower(filter_var($name, FILTER_SANITIZE_STRING));
+    }else{
+        $newname = "";
+    }
+
+    if($newname == ""){
+        $filtered_superheroes = $superheroes;
+    }
+    else{
+        $filtered_superheroes = array_filter($superheroes, function ($var) use($newname) {
+            return (strtolower($var['name']) == $newname || strtolower($var['alias']) == $newname) ;
+        });
+    }   
+?>
+
+<?php if(count($filtered_superheroes) == 0): ?>
+    <h3 class="result-not-found">SUPERHERO NOT FOUND</h3>
+<?php else: ?>
+    <ul>
+        <?php foreach ($filtered_superheroes as $superhero): ?>
+            
+                <?php if($newname != ""): ?>
+                    <h3><?= strtoupper($superhero['alias']); ?></h3>
+                    <h4>A.K.A <?= strtoupper($superhero['name']); ?></h4>
+                    <p><?php echo $superhero['biography']; ?></p>
+                <?php else: ?>
+                    <li>
+                        <h3><?= $superhero['alias']; ?></h3>
+                    </li>
+                <?php endif; ?>
+            
+        <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
