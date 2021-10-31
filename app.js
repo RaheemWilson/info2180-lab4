@@ -1,7 +1,7 @@
 window.onload = function(){
     let searchBtn = document.querySelector("#search-btn");
     ProcessQuery();
-    searchBtn.addEventListener("click", ProcessQuery);
+    searchBtn.addEventListener("click", ProcessQuery, true);
 }
 
 
